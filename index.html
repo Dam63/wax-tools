@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transactions WAX</title>
+<title>Transactions WAX des 24 dernières heures</title>
 <script>
 window.onload = function() {
     const accountNameInput = document.getElementById('accountName');
     const resultContainer = document.getElementById('resultContainer');
-    const apiKey = 'YOUR_WAX_API_KEY'; // Remplacez YOUR_WAX_API_KEY par votre clé API WAX
 
     document.getElementById('fetchTransactions').addEventListener('click', function() {
         const accountName = accountNameInput.value.trim();
@@ -17,27 +16,20 @@ window.onload = function() {
             return;
         }
 
-        fetch(`https://api.wax.alohaeos.com/v1/history/get_actions?account=${accountName}&filter=*`, {
-            headers: {
-                'x-api-key': apiKey
-            }
-        })
+        const apiUrl = `https://api.waxsweden.org:443/v2/history/get_actions?account=${accountName}&sort=desc&after=${encodeURIComponent(new Date(Date.now() - (24 * 60 * 60 * 1000)).toISOString())}`;
+
+        fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
             resultContainer.innerHTML = ''; // Clear previous results
             if (data.actions.length === 0) {
                 resultContainer.innerHTML = 'Aucune transaction trouvée pour ce compte.';
             } else {
-                const transactions = data.actions.filter(action => action.block_time > (Date.now() - (24 * 60 * 60 * 1000)));
-                if (transactions.length === 0) {
-                    resultContainer.innerHTML = 'Aucune transaction trouvée pour ce compte au cours des dernières 24 heures.';
-                } else {
-                    transactions.forEach(transaction => {
-                        const transactionInfo = document.createElement('p');
-                        transactionInfo.textContent = `Transaction ID: ${transaction.action_trace.trx_id}, Block Time: ${transaction.block_time}`;
-                        resultContainer.appendChild(transactionInfo);
-                    });
-                }
+                data.actions.forEach(transaction => {
+                    const transactionInfo = document.createElement('p');
+                    transactionInfo.textContent = `Transaction ID: ${transaction.trx_id}, Block Time: ${transaction.block_time}`;
+                    resultContainer.appendChild(transactionInfo);
+                });
             }
         })
         .catch(error => {
