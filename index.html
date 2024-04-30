@@ -16,7 +16,7 @@ window.onload = function() {
             return;
         }
 
-        const apiUrl = `https://api.waxsweden.org:443/v2/history/get_actions?account=${accountName}&sort=desc&after=${encodeURIComponent(new Date(Date.now() - (24 * 60 * 60 * 1000)).toISOString())}`;
+        const apiUrl = `https://api.waxsweden.org:443/v2/history/get_actions?limit=100&account=${accountName}&sort=desc&after=${encodeURIComponent(new Date(Date.now() - (24 * 60 * 60 * 1000)).toISOString())}`;
 
         fetch(apiUrl)
         .then(response => response.json())
