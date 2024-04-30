@@ -16,7 +16,7 @@ window.onload = function() {
             return;
         }
 
-        const apiUrl = `https://api.waxsweden.org:443/v2/history/get_actions?limit=100&account=${accountName}&sort=desc&after=${encodeURIComponent(new Date(Date.now() - (24 * 60 * 60 * 1000)).toISOString())}`;
+        const apiUrl = `https://api.waxsweden.org:443/v2/history/get_actions?limit=1000&account=${accountName}&sort=desc&after=${encodeURIComponent(new Date(Date.now() - (24 * 60 * 60 * 1000)).toISOString())}`;
 
         fetch(apiUrl)
         .then(response => response.json())
@@ -26,9 +26,16 @@ window.onload = function() {
                 resultContainer.innerHTML = 'Aucune transaction trouvée pour ce compte.';
             } else {
                 data.actions.forEach(transaction => {
-                    const transactionInfo = document.createElement('p');
-                    transactionInfo.textContent = `Transaction ID: ${transaction.trx_id}, Time: ${transaction.timestamp}, Block: ${transaction.block_num}, CPU: ${transaction.cpu_usage_us} μs`;
-                    resultContainer.appendChild(transactionInfo);
+                    if(transaction.cpu_usage_us) {
+                        const transactionInfo = document.createElement('p');
+                        transactionInfo.textContent = `Transaction ID: ${transaction.trx_id}, Time: ${transaction.timestamp}, Block: ${transaction.block_num}, CPU: ${transaction.cpu_usage_us} μs`;
+                        resultContainer.appendChild(transactionInfo);
+                    }
+                    else {
+                        const transactionInfo = document.createElement('p');
+                        transactionInfo.textContent = `<small> - Transaction ID: ${transaction.trx_id}, Time: ${transaction.timestamp}, Block: ${transaction.block_num}</small>`;
+                        resultContainer.appendChild(transactionInfo);
+                    }
                 });
             }
         })
