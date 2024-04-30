@@ -27,7 +27,7 @@ window.onload = function() {
             } else {
                 data.actions.forEach(transaction => {
                     const transactionInfo = document.createElement('p');
-                    transactionInfo.textContent = `Transaction ID: ${transaction.trx_id}, Block Time: ${transaction.block_time}`;
+                    transactionInfo.textContent = `Transaction ID: ${transaction.trx_id}, Time: ${transaction.timestamp}, Block: ${transaction.block_num}, CPU: ${transaction.cpu_usage_us} μs`;
                     resultContainer.appendChild(transactionInfo);
                 });
             }
