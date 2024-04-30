@@ -25,18 +25,24 @@ window.onload = function() {
             if (data.actions.length === 0) {
                 resultContainer.innerHTML = 'Aucune transaction trouvée pour ce compte.';
             } else {
+                let transactions = {};
                 data.actions.forEach(transaction => {
+                    if(transactions[transaction.trx_id] === undefined) transactions[transaction.trx_id] = {trx_id:transaction.trx_id, actions:[]}
                     if(transaction.cpu_usage_us) {
                         const transactionInfo = document.createElement('p');
+                        transactions[transaction.trx_id].cpu_usage_us = transaction.cpu_usage_us
+                        transactions[transaction.trx_id].actions.push(transaction.act.name)
                         transactionInfo.textContent = `Transaction ID: ${transaction.trx_id}, Time: ${transaction.timestamp}, Block: ${transaction.block_num}, CPU: ${transaction.cpu_usage_us} μs`;
                         resultContainer.appendChild(transactionInfo);
                     }
                     else {
                         const transactionInfo = document.createElement('p');
-                        transactionInfo.textContent = `<small> - Transaction ID: ${transaction.trx_id}, Time: ${transaction.timestamp}, Block: ${transaction.block_num}</small>`;
+                        transactions[transaction.trx_id].actions.push(transaction.act.name)
+                        transactionInfo.textContent = ` - Transaction ID: ${transaction.trx_id}, Time: ${transaction.timestamp}, Block: ${transaction.block_num}`;
                         resultContainer.appendChild(transactionInfo);
                     }
                 });
+                console.log(JSON.stringify(transactions));
             }
         })
         .catch(error => {
